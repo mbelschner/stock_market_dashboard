@@ -1,8 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from pathlib import Path
-from src.data_processor import StockDataProcessor
+from data_processor import StockDataProcessor
 import os
 from datetime import datetime
 
@@ -20,7 +19,7 @@ if 'selected_symbol' not in st.session_state:
 # Initialize processor
 @st.cache_resource
 def load_data_processor():
-    return StockDataProcessor()
+    return StockDataProcessor('market_cap_topcompanies.csv')
 
 # Load company data
 @st.cache_data

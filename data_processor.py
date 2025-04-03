@@ -4,12 +4,10 @@ from datetime import datetime, timedelta
 import os
 from typing import List, Dict, Optional
 
-data = pd.read_csv(os.path.join('input_data', 'market_cap_topcompanies.csv'))
-
 class StockDataProcessor:
-    def __init__(self, companies_csv_path: str):
+    def __init__(self, companies_excel_path: str = 'companies.xlsx'):
         """Initialize the processor with the path to the companies CSV file."""
-        self.companies_df = pd.read_excel(os.path.join('input_data', 'companies.xlsx'))
+        self.companies_df = pd.read_excel(companies_excel_path)
         
         # Clean up column names and data
         self.companies_df.columns = [col.lower().strip() for col in self.companies_df.columns]
@@ -241,20 +239,18 @@ class StockDataProcessor:
             print(f"Error fetching pre-market data for {symbol}: {str(e)}")
             return {}
 
-output_dir = "C:/Users/maxib/OneDrive/Dokumente/Finance/Stock Market Dashboard/output"
-
-def save_data(data: Dict, output_dir: str):
+def save_data(data: Dict, output_dir: str = 'output'):
     """Save processed data to JSON files."""
     os.makedirs(output_dir, exist_ok=True)
     
     for symbol, company_data in data.items():
         # Save stock data
         if not company_data['stock_data'].empty:
-            company_data['stock_data'].to_csv(os.path.join(output_dir, f"{symbol}_stock_data.csv"))
+            company_data['stock_data'].to_csv(f"{symbol}_stock_data.csv")
         
         # Save earnings data
         if company_data['earnings_data']:
             pd.DataFrame(company_data['earnings_data']).to_csv(
-                os.path.join(output_dir, f"{symbol}_earnings_data.csv"),
+                f"{symbol}_earnings_data.csv",
                 index=False
             ) 
