@@ -4,4 +4,5 @@ yfinance>=0.2.36
 plotly>=5.18.0
 python-dotenv>=1.0.0
 schedule>=1.2.0
-requests>=2.31.0 
+requests>=2.31.0
+openpyxl>=3.1.0 

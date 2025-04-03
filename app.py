@@ -16,10 +16,14 @@ st.set_page_config(
 if 'selected_symbol' not in st.session_state:
     st.session_state.selected_symbol = None
 
-# Initialize processor
+# Initialize processor with error handling
 @st.cache_resource
 def load_data_processor():
-    return StockDataProcessor('market_cap_topcompanies.csv')
+    try:
+        return StockDataProcessor('companies.csv')
+    except Exception as e:
+        st.error(f"Error loading data: {str(e)}")
+        return None
 
 # Load company data
 @st.cache_data
@@ -162,6 +166,9 @@ st.title("Stock Market Dashboard 📈")
 # Sidebar
 st.sidebar.header("Company Selection")
 processor = load_data_processor()
+if processor is None:
+    st.error("Failed to initialize data processor. Please check if the data file exists and is properly formatted.")
+    st.stop()
 
 # Add search box
 search_term = st.sidebar.text_input("Search companies by name or symbol")

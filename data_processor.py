@@ -5,44 +5,54 @@ import os
 from typing import List, Dict, Optional
 
 class StockDataProcessor:
-    def __init__(self, companies_excel_path: str = 'companies.xlsx'):
+    def __init__(self, companies_csv_path: str = 'companies.csv'):
         """Initialize the processor with the path to the companies CSV file."""
-        self.companies_df = pd.read_excel(companies_excel_path)
-        
-        # Clean up column names and data
-        self.companies_df.columns = [col.lower().strip() for col in self.companies_df.columns]
-        
-        # Define countries to include
-        included_countries = ['United States', 
-                              'China', 
-                              'Japan', 
-                              'Germany',
-                              'United Kingdom',
-                              'France',
-                              'Italy',
-                              'Spain',
-                              'Netherlands',
-                              'Switzerland',
-                              "Austria",
-                              "Australia",
-                              "Canada",
-                              "Sweden",
-                              "Norway",
-                              "Denmark",
-                              "Finland",
-                              "South Korea",
-                              "Taiwan", 
-                              "Hong Kong",
-                              "Belgium"
-                              ]
-        
-        # Filter to keep only included countries
-        self.companies_df = self.companies_df[self.companies_df['country'].isin(included_countries)]
-        
-        # Sort by market cap
-        self.companies_df = self.companies_df.sort_values('marketcap', ascending=False)
-        
-        print(f"Loaded {len(self.companies_df)} companies available on etoro")
+        try:
+            self.companies_df = pd.read_csv(companies_csv_path)
+            
+            # Clean up column names and data
+            self.companies_df.columns = [col.lower().strip() for col in self.companies_df.columns]
+            
+            # Clean up market cap (remove commas and convert to float)
+            if 'marketcap' in self.companies_df.columns:
+                self.companies_df['marketcap'] = self.companies_df['marketcap'].str.replace(',', '').astype(float)
+            
+            # Define countries to include
+            included_countries = ['United States', 
+                                'China', 
+                                'Japan', 
+                                'Germany',
+                                'United Kingdom',
+                                'France',
+                                'Italy',
+                                'Spain',
+                                'Netherlands',
+                                'Switzerland',
+                                "Austria",
+                                "Australia",
+                                "Canada",
+                                "Sweden",
+                                "Norway",
+                                "Denmark",
+                                "Finland",
+                                "South Korea",
+                                "Taiwan", 
+                                "Hong Kong",
+                                "Belgium"
+                                ]
+            
+            # Filter to keep only included countries
+            self.companies_df = self.companies_df[self.companies_df['country'].isin(included_countries)]
+            
+            # Sort by market cap
+            self.companies_df = self.companies_df.sort_values('marketcap', ascending=False)
+            
+            print(f"Loaded {len(self.companies_df)} companies")
+            
+        except Exception as e:
+            print(f"Error loading companies data: {str(e)}")
+            # Initialize with empty DataFrame if file loading fails
+            self.companies_df = pd.DataFrame(columns=['symbol', 'name', 'country', 'marketcap', 'sector'])
 
     def filter_companies(self, countries: Optional[List[str]] = "Germany", top_n: Optional[int] = 20) -> pd.DataFrame:
         """Filter companies by countries and/or top N by market cap.
