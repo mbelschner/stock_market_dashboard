@@ -1,46 +1,33 @@
 # Stock Market Dashboard
 
-A real-time stock market dashboard that displays company information, stock prices, and earnings data. The dashboard updates automatically daily and provides interactive visualizations.
+A real-time stock market dashboard built with Streamlit that displays company information, stock prices, and earnings data.
 
 ## Features
-
-- Company information display
-- 3-year stock price history with candlestick charts
-- Earnings history with beat/miss indicators
-- Daily automatic updates
-- Interactive Streamlit interface
+- Company information and financials
+- Stock price history with technical indicators
+- Earnings data and analysis
+- Pre-market and after-hours trading data
+- Multi-country and sector filtering
 
 ## Setup
-
 1. Clone this repository
-2. Install the required dependencies:
+2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-
-3. Create a `companies.csv` file with the following columns:
-   - symbol (e.g., AAPL, MSFT)
-   - name (company name)
-   - sector (optional)
-   - industry (optional)
-   - description (optional)
-
-   Example:
-   ```csv
-   symbol,name,sector,industry,description
-   AAPL,Apple Inc.,Technology,Consumer Electronics,Technology company
-   MSFT,Microsoft Corporation,Technology,Software,Software company
-   ```
-
-4. Start the data update service:
-   ```bash
-   python update_data.py
-   ```
-
-5. Run the Streamlit dashboard:
+3. Place your market cap companies CSV file in the `data/` directory
+4. Run the app:
    ```bash
    streamlit run app.py
    ```
+
+## Data Structure
+The `data/market_cap_topcompanies.csv` file should contain the following columns:
+- symbol
+- name
+- country
+- sector
+- marketcap
 
 ## Project Structure
 
