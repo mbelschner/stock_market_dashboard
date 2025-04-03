@@ -20,7 +20,7 @@ if 'selected_symbol' not in st.session_state:
 @st.cache_resource
 def load_data_processor():
     try:
-        return StockDataProcessor('market_cap_topcompanies.csv')
+        return StockDataProcessor('companies.csv')
     except Exception as e:
         st.error(f"Error loading data: {str(e)}")
         return None
