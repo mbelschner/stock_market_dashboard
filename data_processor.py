@@ -8,14 +8,34 @@ class StockDataProcessor:
     def __init__(self, companies_csv_path: str = 'companies.csv'):
         """Initialize the processor with the path to the companies CSV file."""
         try:
+            # Read the CSV file
             self.companies_df = pd.read_csv(companies_csv_path)
+            
+            # Print the actual columns to help debug
+            print("Available columns:", self.companies_df.columns.tolist())
             
             # Clean up column names and data
             self.companies_df.columns = [col.lower().strip() for col in self.companies_df.columns]
             
-            # Clean up market cap (remove commas and convert to float)
+            # Clean up market cap - handle different possible formats
             if 'marketcap' in self.companies_df.columns:
-                self.companies_df['marketcap'] = self.companies_df['marketcap'].str.replace(',', '').astype(float)
+                # Convert market cap to numeric, handling different formats
+                if self.companies_df['marketcap'].dtype == object:  # if it's string
+                    self.companies_df['marketcap'] = (self.companies_df['marketcap']
+                                                    .replace({',': ''}, regex=True)
+                                                    .astype(float))
+                # If it's already numeric, leave it as is
+            
+            # Rename columns if they have different names
+            column_mapping = {
+                'Country': 'country',
+                'Symbol': 'symbol',
+                'Name': 'name',
+                'Market Cap': 'marketcap'
+                # Add any other column mappings that might be needed
+            }
+            
+            self.companies_df = self.companies_df.rename(columns=column_mapping)
             
             # Define countries to include
             included_countries = ['United States', 
@@ -41,6 +61,13 @@ class StockDataProcessor:
                                 "Belgium"
                                 ]
             
+            # Check if required columns exist
+            required_columns = ['symbol', 'name', 'country', 'marketcap']
+            missing_columns = [col for col in required_columns if col not in self.companies_df.columns]
+            
+            if missing_columns:
+                raise ValueError(f"Missing required columns: {missing_columns}. Available columns: {self.companies_df.columns.tolist()}")
+            
             # Filter to keep only included countries
             self.companies_df = self.companies_df[self.companies_df['country'].isin(included_countries)]
             
@@ -52,7 +79,7 @@ class StockDataProcessor:
         except Exception as e:
             print(f"Error loading companies data: {str(e)}")
             # Initialize with empty DataFrame if file loading fails
-            self.companies_df = pd.DataFrame(columns=['symbol', 'name', 'country', 'marketcap', 'sector'])
+            self.companies_df = pd.DataFrame(columns=['symbol', 'name', 'country', 'marketcap'])
 
     def filter_companies(self, countries: Optional[List[str]] = "Germany", top_n: Optional[int] = 20) -> pd.DataFrame:
         """Filter companies by countries and/or top N by market cap.
